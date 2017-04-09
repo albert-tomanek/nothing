@@ -45,8 +45,23 @@ Level :: Level(char *filename)
 	this->player_y = (int) header->player_y;
 	
 	/* Load the level data */
-	//this->contents = malloc(this->width * this->height * sizeof(uint8_t));
+	this->contents = malloc(this->width * this->height * sizeof(uint8_t));
 	
+	uint8_t byte;
+	int index;
+	
+	while (index < this->width * this->height)
+	{
+		byte = (uint8_t) fgetc(lvlfile);	// If there *was* a read error, it would most likley be found by the checksum anyway
+		
+		/* First tile */
+		this->contents[index] = (byte & 0xF0) >> 4;
+		index++;
+		
+		/* Second tile */
+		this->contents[index] = (byte & 0x0F);
+		index++;
+	}
 	
 	fclose(lvlfile);
 	

@@ -26,20 +26,24 @@ struct mvlvl_header
 class Level
 {
 public:
-
-	int width, height;
+	
+	/* Level parameters. Don't change these from outside the class;				*
+	 * it'll most likely cause the program to seg-fault, and spoil your day.	*/
+	 
+	int width, height;	
 	int player_x, player_y;
 	char *name;
 
-	uint8_t *contents;
+	uint8_t *contents;	// Array of the tiles in the level.
 	char *error;		// NULL unless there is an error
 	
+	/* Methods */
 	Level(char *filename);
 	~Level();
 	
-	void draw(int x, int y);
+	void draw(int x, int y);	// Draws the level, the top left being at (x,y), using termbox.
 	
-	int coins();				// Returns how many coins there are in the level
+	int coins();				// Finds how many coins there are in the level, so that YOU don't have to.
 };
 
 uint8_t mvlvl_format_version(FILE* file);
