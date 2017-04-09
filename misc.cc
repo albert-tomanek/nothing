@@ -126,3 +126,42 @@ void tb_sleep(int millisecs)
 	/* For portability */
 	usleep(millisecs * 1000);
 }
+
+/* Text functions */
+
+char *text_shorten(char *in, int len)
+{
+	char *out = strdup(in);
+
+	out[len]    = '\0';
+	out[len-1]  = '.';
+	out[len-2]  = '.';
+	out[len-3]  = '.';
+
+	return out;
+}
+
+char *text_fill(char *in, int len)
+{
+	int in_len = strlen(in);
+
+	char *out = calloc(len+1, sizeof(char));    //len+1 for the null-term at the end.
+
+	if(in_len > len) 	// The text is _larger_ than tne area to be filled.
+	{
+		out = text_shorten(in, len);
+	}
+	else		// The text is _smaller_ than the area to be flled.
+	{
+		strcpy(out, in);
+
+		for (int i = 0; i < (len - in_len); i++)
+		{
+			out[in_len + i] = ' ';
+		}
+
+	}
+
+	return out;
+}
+

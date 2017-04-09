@@ -105,20 +105,20 @@ void Level :: draw(int tl_x, int tl_y)
 			switch (tile)
 			{
 			case MV_TILE_EMPTY:
-				tb_change_cell(x, y, ' ', TB_DEFAULT, TB_BLACK);
+				tb_change_cell(tl_x + x, tl_y + y, ' ', TB_DEFAULT, TB_BLACK);
 				break;
 			case MV_TILE_GROUND:
-				tb_change_cell(x, y, ' ', TB_DEFAULT, TB_BLUE);
+				tb_change_cell(tl_x + x, tl_y + y, ' ', TB_DEFAULT, TB_BLUE);
 				break;
 			case MV_TILE_WALL:
-				tb_change_cell(x, y, '#', TB_WHITE, TB_BLUE);
+				tb_change_cell(tl_x + x, tl_y + y, '#', TB_WHITE, TB_BLUE);
 				break;
 			case MV_TILE_COIN:
-				tb_change_cell(x, y, '+', TB_GREEN | TB_BOLD, TB_BLUE);
+				tb_change_cell(tl_x + x, tl_y + y, '+', TB_GREEN | TB_BOLD, TB_BLUE);
 				break;
 
 			default:
-				tb_change_cell(x, y, '@', TB_WHITE | TB_BOLD, TB_RED);
+				tb_change_cell(tl_x + x, tl_y + y, '@', TB_WHITE | TB_BOLD, TB_RED);
 				break;
 			}
 			
