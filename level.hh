@@ -25,6 +25,8 @@ struct mvlvl_header
 
 class Level
 {
+	uint8_t checksum;
+	
 public:
 	
 	/* Level parameters. Don't change these from outside the class;				*
@@ -44,9 +46,7 @@ public:
 	void draw(int x, int y);	// Draws the level, the top left being at (x,y), using termbox.
 	
 	int coins();				// Finds how many coins there are in the level, so that YOU don't have to.
+	int check();				// Checks the level data integrity via the checksum. Returns 1 on pass and 0 on fail.
 };
-
-uint8_t mvlvl_format_version(FILE* file);
-uint8_t mvlvl_check_format(FILE* file);
 
 #endif

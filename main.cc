@@ -15,6 +15,7 @@ int main()
 	{
 		printf("%02X ", lvl->contents[i]);
 	}
+	printf("\nChecksum %s.\n", lvl->check() ? "passed" : "failed");
 	//tb_shutdown();
 
 	delete lvl;

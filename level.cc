@@ -63,6 +63,10 @@ Level :: Level(char *filename)
 		index++;
 	}
 	
+	/* Read the checksum */
+	fseek(lvlfile, -1, SEEK_END);		// We should already be 1 byte before the end, but we fseek anyway to skip any padding in case the level contents are and odd number of nibbles long.
+	this->checksum = fgetc(lvlfile);
+	
 	fclose(lvlfile);
 	
 	return;
@@ -85,10 +89,14 @@ Level :: ~Level()
 	free(this->error);
 }
 
-uint8_t mvlvl_format_version(FILE* file)
+int Level :: check()
 {
+	uint16_t sum = 0;		// This *may* overflow but I can't be bothered to check whether it could because my maths brain is sleepy today
 	
-}
-uint8_t mvlvl_check_format(FILE* file)
-{
+	for (int i = 0; i < this->width * this->height; i++)
+	{
+		sum += contents[i];
+	}
+		
+	return (this->checksum == sum % 256);
 }
