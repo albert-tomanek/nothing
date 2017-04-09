@@ -1,0 +1,46 @@
+ Offset |   Value   | Comment
+--------+-----------+------------------
+0 - 1    0xA6, 0xC4  Magic number
+2 - 7	 "MVGAME"
+8        uint8_t     format version
+9        0x00        padding
+10       uint8_t     level width
+11       uint8_t     level height
+12       uint8_t     player start X
+13       uint8_t     player start Y
+14 - 30  char[16]    level name
+31       0x00        padding
+32...    uint8_t[]   level map with length of (level width * level height)
+         uint8_t     The checksum, i.e (the sum of all the bytes of the level map) % 256
+
+LEVEL MAP
+---------
+The level map is stored as an array of bytes.
+Each tile takes up 4-bits (half a byte aka a nibble), and therefore one byte can store two tiles.
+A byte may be:
+
+  1 0 0 1 0 1 0 0
+  | | | | `-`-`-`--- tile 2
+  | | | |
+  `-`-`-`----------- tile 1
+
+Therefore there can be 16 types of tile:
+
+ HEX |   BIN   |  Name  |   Description
+-----+---------+--------+-----------------
+ 0x0   0 0 0 0   EMPTY    Absence of a tile. Used in levels that are not rectangular. The player can not go onto this tile.
+ 0x1   0 0 0 1   WALL     A wall. Stands in the way and the player cannot go through it.
+ 0x2   0 0 1 0   GROUND   The ground -- empty space that the player can go on.
+ 0x3   0 0 1 1   COIN     A coin. All coins need to be collected to complete the level.
+ 0x4   0 1 0 0   UNDEF    Undefined.
+ 0x5   0 1 0 1   UNDEF    Undefined.
+ 0x6   0 1 1 0   UNDEF    Undefined.
+ 0x7   0 1 1 1   UNDEF    Undefined.
+ 0x8   1 0 0 0   UNDEF    Undefined.
+ 0x9   1 0 0 1   UNDEF    Undefined.
+ 0xA   1 0 1 0   UNDEF    Undefined.
+ 0xB   1 0 1 1   UNDEF    Undefined.
+ 0xC   1 1 0 0   UNDEF    Undefined.
+ 0xD   1 1 0 1   UNDEF    Undefined.
+ 0xE   1 1 1 0   UNDEF    Undefined.
+ 0xF   1 1 1 1   UNDEF    Undefined.

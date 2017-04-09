@@ -60,6 +60,4 @@ void mv_error(char *message, enum mv_ErrorFormat format)
 		fprintf(stderr, "Error: %s\n", message);
 		getchar();
 	}
-	
-	exit(1);
 }

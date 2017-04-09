@@ -1,0 +1,79 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
+#include <errno.h>
+#include <termbox.h>
+
+#include "level.hh"
+
+#include "tiles.h"
+#include "error.hh"
+
+Level :: Level(char *filename)
+{
+	/* We have to pre-declare these, because unlike C,								*
+	 * C++ complains that the variable may not be initialised if you use a goto.	*/
+	struct mvlvl_header *header;
+	bool ismvfile;
+	
+	FILE *lvlfile = fopen(filename, "r");
+	lvl_check(lvlfile, strerror(errno));	// Check for errors
+	
+	/* Load the header */
+	header = malloc(sizeof(struct mvlvl_header));
+	fread(header, sizeof(struct mvlvl_header), 1, lvlfile);
+	
+	/* Ensure the file is a .mv file */
+	ismvfile = true;
+	ismvfile = (header->magic_number[0] == 0xA6);
+	ismvfile = (header->magic_number[1] == 0xC4);
+	ismvfile = (! strncmp(header->magic_string, "MVGAME", 6));
+	ismvfile = (header->padding1 == 0x00);
+	ismvfile = (header->padding2 == 0x00);
+	
+	lvl_check(ismvfile == true, "File is not a mvgame level.")
+	
+	/* Ensure it is of the correct format version */
+	lvl_check(header->fmtver == 0x01, "Format version not supported.");
+	
+	/* Keep a copy of the level variables */
+	this->name     = strndup(header->lvl_name, 16);
+	this->width    = (int) header->lvl_width;
+	this->height   = (int) header->lvl_height;
+	this->player_x = (int) header->player_x;
+	this->player_y = (int) header->player_y;
+	
+	/* Load the level data */
+	//this->contents = malloc(this->width * this->height * sizeof(uint8_t));
+	
+	
+	fclose(lvlfile);
+	
+	return;
+	
+error:
+	this->width  = 0;
+	this->height = 0;
+	this->contents = NULL;
+	this->name     = NULL;
+	
+	if (lvlfile) fclose(lvlfile);
+	
+	return;
+}
+
+Level :: ~Level()
+{
+	free(this->contents);
+	free(this->name);
+	free(this->error);
+}
+
+uint8_t mvlvl_format_version(FILE* file)
+{
+	
+}
+uint8_t mvlvl_check_format(FILE* file)
+{
+}

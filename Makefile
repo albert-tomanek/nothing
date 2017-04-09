@@ -1,23 +1,23 @@
 TARGET = mvgame
+CC = g++
 LIBS = -ltermbox
-CC = gcc
-CFLAGS = -g -O0 -Wall
+CFLAGS = -Wno-write-strings -fpermissive
 
 .PHONY: default all clean
 
 default: $(TARGET)
 all: default
 
-OBJECTS = misc.o  error.o  level.o  main.o  player.o
-HEADERS = misc.hh error.hh level.hh main.hh player.hh
+OBJECTS = error.o level.o main.o misc.o player.o 
+HEADERS = chars.h error.hh level.hh main.hh misc.hh mvgame.hh player.hh tiles.h
 
-%.o: %.c $(HEADERS)
+%.o: %.cc $(HEADERS)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 .PRECIOUS: $(TARGET) $(OBJECTS)
 
 $(TARGET): $(OBJECTS)
-	$(CC) $(OBJECTS) -Wall $(LIBS) -o $@
+	$(CC) $(OBJECTS) $(CFLAGS) -Wall $(LIBS) -o $@
 
 clean:
 	-rm -f *.o
