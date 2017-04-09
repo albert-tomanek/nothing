@@ -3,20 +3,21 @@
 
 #include "level.hh"
 #include "error.hh"
+#include "misc.hh"
 
 int main()
 {
-	//tb_init();
+	tb_init();
 	
 	Level *lvl = new Level("levels/lvl1.mv");
-	if (lvl->error) { mv_error(lvl->error, STDIO); free(lvl->error); }
+	if ( lvl->error)   { mv_error(lvl->error, TERMBOX); free(lvl->error); exit(1);}
+	if (!lvl->check()) { mv_error("Checksum failed.", TERMBOX); tb_clear();}
 	
-	for (int i = 0; i < lvl->width * lvl->height; i++)
-	{
-		printf("%02X ", lvl->contents[i]);
-	}
-	printf("\nChecksum %s.\n", lvl->check() ? "passed" : "failed");
-	//tb_shutdown();
+	lvl->draw(1, 1);
+	
+	tb_present();
+	tb_sleep(5000);
+	tb_shutdown();
 
 	delete lvl;
 	

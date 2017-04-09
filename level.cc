@@ -89,9 +89,54 @@ Level :: ~Level()
 	free(this->error);
 }
 
+inline uint8_t Level :: tile_at(int x, int y)
+{
+	return this->contents[(y * this->height) + x];
+}
+
+void Level :: draw(int tl_x, int tl_y)
+{
+	for (int y = 0; y < this->height && tl_y + y < tb_height(); y++)
+	{
+		for (int x = 0; x < this->width && tl_x + x < tb_width(); x++)
+		{
+			uint8_t tile = this->tile_at(x, y);
+			
+			switch (tile)
+			{
+			case MV_TILE_EMPTY:
+				tb_change_cell(x, y, ' ', TB_DEFAULT, TB_BLACK);
+				break;
+			case MV_TILE_GROUND:
+				tb_change_cell(x, y, ' ', TB_DEFAULT, TB_BLUE);
+				break;
+			case MV_TILE_WALL:
+				tb_change_cell(x, y, '#', TB_WHITE, TB_BLUE);
+				break;
+			case MV_TILE_COIN:
+				tb_change_cell(x, y, '+', TB_GREEN | TB_BOLD, TB_BLUE);
+				break;
+
+			default:
+				tb_change_cell(x, y, '@', TB_WHITE | TB_BOLD, TB_RED);
+				break;
+			}
+			
+		}
+	}
+	
+}
+
+int Level :: coins()
+{
+	/* Not implemented yet */
+	
+	return 0;
+}
+
 int Level :: check()
 {
-	uint16_t sum = 0;		// This *may* overflow but I can't be bothered to check whether it could because my maths brain is sleepy today
+	uint32_t sum = 0;
 	
 	for (int i = 0; i < this->width * this->height; i++)
 	{

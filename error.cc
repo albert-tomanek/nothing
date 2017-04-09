@@ -52,8 +52,6 @@ void mv_error(char *message, enum mv_ErrorFormat format)
 		tb_present();
 		
 		tb_sleep(100);
-		
-		tb_shutdown();
 	}
 	else
 	{

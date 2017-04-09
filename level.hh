@@ -44,8 +44,10 @@ public:
 	~Level();
 	
 	void draw(int x, int y);	// Draws the level, the top left being at (x,y), using termbox.
+	inline uint8_t tile_at(int x, int y);	// Returns the value of the tile at (x,y)
 	
 	int coins();				// Finds how many coins there are in the level, so that YOU don't have to.
+	
 	int check();				// Checks the level data integrity via the checksum. Returns 1 on pass and 0 on fail.
 };
 
