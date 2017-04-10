@@ -68,6 +68,11 @@ int main(int argc, char *argv[])
 		sprintf(coins_str, "Coins: %d/%d", player->coins, lvl->coins);						// Coins
 		tb_print(tb_width() - strlen(coords_str) - strlen(coins_str) - 2, tb_height()-1, coins_str, TB_WHITE, TB_BLUE);
 
+		if (60 < tb_width())
+		{
+			tb_print(tb_width() / 2 - strlen(lvl->name) / 2, tb_height() - 1, lvl->name, TB_WHITE, TB_BLUE);
+		}
+
 		/* Update the screen */
 		tb_present();
 
