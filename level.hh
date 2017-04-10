@@ -1,12 +1,10 @@
 #ifndef __MVGAME_LEVEL_H__
 #define __MVGAME_LEVEL_H__
 
-#include <stdio.h>
 #include <stdint.h>
+#include "direction.hh"
 
-#define FORMAT_VERSION 0x01
-
-#define lvl_check(S, M)	if (!S) {this->error = strdup(M); goto error;}
+#define lvl_check(S, M)	if (!S) { if (this->error != NULL) { free(this->error); }; this->error = strdup(M); goto error;}
 
 struct mvlvl_header
 {
@@ -14,7 +12,7 @@ struct mvlvl_header
 	char    magic_string[6];
 	uint8_t fmtver;
 	uint8_t padding1;
-	
+
 	uint8_t lvl_width;
 	uint8_t lvl_height;
 	uint8_t player_x;
@@ -26,28 +24,30 @@ struct mvlvl_header
 class Level
 {
 	uint8_t checksum;
-	
+
 public:
-	
+
 	/* Level parameters. Don't change these from outside the class;				*
 	 * it'll most likely cause the program to seg-fault, and spoil your day.	*/
-	 
-	int width, height;	
+
+	int width, height;
 	int player_x, player_y;
 	char *name;
 
 	uint8_t *contents;	// Array of the tiles in the level.
 	char *error;		// NULL unless there is an error
-	
+
 	/* Methods */
 	Level(char *filename);
 	~Level();
-	
+
 	void draw(int x, int y);	// Draws the level, the top left being at (x,y), using termbox.
+
 	inline uint8_t tile_at(int x, int y);	// Returns the value of the tile at (x,y)
-	
+	uint8_t tile_by(int x, int y, enum Direction direction);
+
 	int coins();				// Finds how many coins there are in the level, so that YOU don't have to.
-	
+
 	int check();				// Checks the level data integrity via the checksum. Returns 1 on pass and 0 on fail.
 };
 
