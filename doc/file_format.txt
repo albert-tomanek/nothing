@@ -32,7 +32,7 @@ Therefore there can be 16 types of tile:
  0x1   0 0 0 1   WALL     A wall. Stands in the way and the player cannot go through it.
  0x2   0 0 1 0   GROUND   The ground -- empty space that the player can go on.
  0x3   0 0 1 1   COIN     A coin. All coins need to be collected to complete the level.
- 0x4   0 1 0 0   UNDEF    Undefined.
+ 0x4   0 1 0 0   EXIT     The exit from the level
  0x5   0 1 0 1   UNDEF    Undefined.
  0x6   0 1 1 0   UNDEF    Undefined.
  0x7   0 1 1 1   UNDEF    Undefined.

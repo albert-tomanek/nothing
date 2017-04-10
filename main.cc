@@ -52,6 +52,21 @@ int main(int argc, char *argv[])
 			player->coins++;
 		}
 
+		if (player->coins == lvl->coins)
+		{
+			/* Open the exit if the player has all the coins */
+
+			lvl->exits_open = true;
+		}
+
+		if (lvl->tile_at(player->x, player->y) == MV_TILE_EXIT)
+		{
+			/* If we're in the exit, quit */
+
+			run = 0;
+			continue;
+		}
+
 		/* Draw the level */
 		lvl->draw(tb_width() / 2 - player->x, tb_height() / 2 - player->y);
 
@@ -85,9 +100,10 @@ int main(int argc, char *argv[])
 		case TB_KEY_ARROW_UP:
 			player->symbol = '^';
 
-			if (0 < player->y	&&												// If we're not on the northenmost row already
+			if (0 < player->y	&& (											// If we're not on the northenmost row already
 				lvl->tile_by(player->x, player->y, NORTH) == MV_TILE_GROUND	||	// And the tile north of us is a ground or a coin tile
-				lvl->tile_by(player->x, player->y, NORTH) == MV_TILE_COIN	)
+				lvl->tile_by(player->x, player->y, NORTH) == MV_TILE_COIN	||
+				(lvl->tile_by(player->x, player->y, NORTH) == MV_TILE_EXIT && lvl->exits_open) ))
 			{
 				player->move(NORTH);
 			}
@@ -96,9 +112,10 @@ int main(int argc, char *argv[])
 		case TB_KEY_ARROW_DOWN:
 			player->symbol = 'v';
 
-			if (player->y < lvl->height - 1		&								// If we're not on the southernmost row already
+			if (player->y < lvl->height - 1		&& (							// If we're not on the southernmost row already
 				lvl->tile_by(player->x, player->y, SOUTH) == MV_TILE_GROUND	||	// And the tile south of us is a ground or a coin tile
-				lvl->tile_by(player->x, player->y, SOUTH) == MV_TILE_COIN	)
+				lvl->tile_by(player->x, player->y, SOUTH) == MV_TILE_COIN	||
+				(lvl->tile_by(player->x, player->y, SOUTH) == MV_TILE_EXIT && lvl->exits_open) ))	// Or an open exit tile
 			{
 				player->move(SOUTH);
 			}
@@ -107,9 +124,10 @@ int main(int argc, char *argv[])
 		case TB_KEY_ARROW_LEFT:
 			player->symbol = '<';
 
-			if (0 < player->x	&&
+			if (0 < player->x	&& (
 				lvl->tile_by(player->x, player->y, WEST) == MV_TILE_GROUND	||
-				lvl->tile_by(player->x, player->y, WEST) == MV_TILE_COIN	)
+				lvl->tile_by(player->x, player->y, WEST) == MV_TILE_COIN	||
+				(lvl->tile_by(player->x, player->y, WEST) == MV_TILE_EXIT && lvl->exits_open) ))
 			{
 				player->move(WEST);
 			}
@@ -118,9 +136,10 @@ int main(int argc, char *argv[])
 		case TB_KEY_ARROW_RIGHT:
 			player->symbol = '>';
 
-			if (player->x < lvl->width - 1	&&
+			if (player->x < lvl->width - 1	&& (
 				lvl->tile_by(player->x, player->y, EAST) == MV_TILE_GROUND	||
-				lvl->tile_by(player->x, player->y, EAST) == MV_TILE_COIN	)
+				lvl->tile_by(player->x, player->y, EAST) == MV_TILE_COIN	||
+				(lvl->tile_by(player->x, player->y, EAST) == MV_TILE_EXIT && lvl->exits_open) ))
 			{
 				player->move(EAST);
 			}
@@ -136,9 +155,15 @@ int main(int argc, char *argv[])
 	}
 
 	/* End things */
-	delete lvl;
-
 	tb_shutdown();
+
+	if (lvl->exits_open)
+	{
+		printf("Well done, you completed the level!");
+		getchar();
+	}
+
+	delete lvl;
 
 	return 0;
 }

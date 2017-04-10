@@ -7,5 +7,6 @@
 #define MV_TILE_WALL   0x1
 #define MV_TILE_GROUND 0x2
 #define MV_TILE_COIN   0x3
+#define MV_TILE_EXIT   0x4
 
 #endif

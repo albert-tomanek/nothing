@@ -16,7 +16,8 @@ Level :: Level(char *filename)
 	 * C++ complains that the variable may not be initialised if you use a goto.	*/
 	struct mvlvl_header *header;
 	bool ismvfile;
-	int d;
+
+	this->exits_open = false;
 
 	FILE *lvlfile = fopen(filename, "r");
 	lvl_check(lvlfile, strerror(errno));	// Check for errors
@@ -144,6 +145,9 @@ void Level :: draw(int tl_x, int tl_y)
 				break;
 			case MV_TILE_COIN:
 				tb_change_cell(tl_x + x, tl_y + y, '+', TB_GREEN | TB_BOLD, TB_BLUE);
+				break;
+			case MV_TILE_EXIT:
+				tb_change_cell(tl_x + x, tl_y + y, (this->exits_open ? 'O' : 'X'), (this->exits_open ? TB_GREEN : TB_RED) | TB_BOLD, TB_BLUE);
 				break;
 
 			default:

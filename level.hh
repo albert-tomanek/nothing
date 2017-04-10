@@ -30,10 +30,11 @@ public:
 	/* Level parameters. Don't change these from outside the class;				*
 	 * it'll most likely cause the program to seg-fault, and spoil your day.	*/
 
-	int width, height;
-	int player_x, player_y;
+	int   width, height;
+	int   player_x, player_y;
 	char *name;
-	int coins;
+	int   coins;
+	bool  exits_open;	// Whether the exits are open or closed.
 
 	uint8_t *contents;	// Array of the tiles in the level.
 	char *error;		// NULL unless there is an error
