@@ -13,6 +13,7 @@ class Player
 public:
 	int x, y;		// x and y of the player IN THE LEVEL
 	char symbol;	// The symbol that represents the player
+	int coins;
 
 	Player();
 

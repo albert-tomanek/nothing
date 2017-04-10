@@ -145,7 +145,7 @@ char *text_fill(char *in, int len)
 {
 	int in_len = strlen(in);
 
-	char *out = calloc(len+1, sizeof(char));    //len+1 for the null-term at the end.
+	char *out = (char *) calloc(len+1, sizeof(char));    //len+1 for the null-term at the end.
 
 	if(in_len > len) 	// The text is _larger_ than tne area to be filled.
 	{
@@ -164,4 +164,3 @@ char *text_fill(char *in, int len)
 
 	return out;
 }
-

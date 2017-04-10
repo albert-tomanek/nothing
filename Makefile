@@ -1,7 +1,7 @@
 TARGET = mvgame
 CC = g++
 LIBS = -ltermbox
-CFLAGS = -Wno-write-strings -fpermissive
+CFLAGS = -Wno-write-strings -fpermissive -O1		# Without optimisations, a BUG IN THE COMPILER caused the counting of coins in Level :: Level() to break the checksum...
 
 .PHONY: default all clean
 

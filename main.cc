@@ -31,16 +31,26 @@ int main(int argc, char *argv[])
 	player->y = lvl->player_y;
 
 	/* Keypress event struct */
-	struct tb_event *keypress = malloc(sizeof(struct tb_event));
+	struct tb_event *keypress = (struct tb_event *) malloc(sizeof(struct tb_event));
 
 	/* Other variables */
 	char coords_str[SHORT_STRLEN];		// Just used to sprintf() the player's coordinates to.
+	char coins_str[SHORT_STRLEN];
 
 	int run = 1;
 	while (run)
 	{
 		/* Clear the screen before re-drawing */
 		tb_clear();
+
+		/* Level-manipulation */
+		if (lvl->tile_at(player->x, player->y) == MV_TILE_COIN)
+		{
+			/* Pick up coins if we are on a coin tile */
+
+			lvl->contents[player->y * lvl->width + player->x] = MV_TILE_GROUND;
+			player->coins++;
+		}
 
 		/* Draw the level */
 		lvl->draw(tb_width() / 2 - player->x, tb_height() / 2 - player->y);
@@ -49,10 +59,14 @@ int main(int argc, char *argv[])
 		player->draw_xy(tb_width() / 2, tb_height() / 2);
 
 		/* Draw the info bar */
-		tb_fill(0, tb_height() - 1, tb_width(), tb_height() - 1, TB_BLUE);
-		tb_print(0, tb_height() - 1, "Press F2 to quit.", TB_WHITE, TB_BLUE);
-		sprintf(coords_str, "(%d,%d)", player->x, player->y);
-		tb_print(tb_width()-strlen(coords_str), tb_height()-1, coords_str, TB_WHITE, TB_BLUE);
+		tb_fill(0, tb_height() - 1, tb_width(), tb_height() - 1, TB_BLUE);		// Draw the actual bar
+		tb_print(0, tb_height() - 1, "Press F2 to quit.", TB_WHITE, TB_BLUE);	// Press F2 to quit
+
+		sprintf(coords_str, "(%d,%d)", player->x, player->y);									// Coordinates
+		tb_print(tb_width() - strlen(coords_str), tb_height()-1, coords_str, TB_WHITE, TB_BLUE);
+
+		sprintf(coins_str, "Coins: %d/%d", player->coins, lvl->coins);						// Coins
+		tb_print(tb_width() - strlen(coords_str) - strlen(coins_str) - 2, tb_height()-1, coins_str, TB_WHITE, TB_BLUE);
 
 		/* Update the screen */
 		tb_present();

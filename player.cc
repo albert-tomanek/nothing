@@ -4,6 +4,7 @@
 Player :: Player()
 {
 	this->symbol = '*';
+	this->coins = 0;
 }
 
 void Player :: move(enum Direction direction)
@@ -14,15 +15,15 @@ void Player :: move(enum Direction direction)
 		case NORTH:
 			this->y -= 1;
 		break;
-		
+
 		case SOUTH:
 			this->y += 1;
 		break;
-		
+
 		case EAST:
 			this->x += 1;
 		break;
-		
+
 		case WEST:
 			this->x -= 1;
 		break;

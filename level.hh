@@ -4,7 +4,7 @@
 #include <stdint.h>
 #include "direction.hh"
 
-#define lvl_check(S, M)	if (!S) { if (this->error != NULL) { free(this->error); }; this->error = strdup(M); goto error;}
+#define lvl_check(S, M)	if (!(S)) { if (this->error != NULL) { free(this->error); }; this->error = strdup(M); goto error;}
 
 struct mvlvl_header
 {
@@ -33,6 +33,7 @@ public:
 	int width, height;
 	int player_x, player_y;
 	char *name;
+	int coins;
 
 	uint8_t *contents;	// Array of the tiles in the level.
 	char *error;		// NULL unless there is an error
@@ -43,10 +44,8 @@ public:
 
 	void draw(int x, int y);	// Draws the level, the top left being at (x,y), using termbox.
 
-	inline uint8_t tile_at(int x, int y);	// Returns the value of the tile at (x,y)
+	uint8_t tile_at(int x, int y);	// Returns the value of the tile at (x,y)
 	uint8_t tile_by(int x, int y, enum Direction direction);
-
-	int coins();				// Finds how many coins there are in the level, so that YOU don't have to.
 
 	int check();				// Checks the level data integrity via the checksum. Returns 1 on pass and 0 on fail.
 };

@@ -16,12 +16,13 @@ Level :: Level(char *filename)
 	 * C++ complains that the variable may not be initialised if you use a goto.	*/
 	struct mvlvl_header *header;
 	bool ismvfile;
+	int d;
 
 	FILE *lvlfile = fopen(filename, "r");
 	lvl_check(lvlfile, strerror(errno));	// Check for errors
 
 	/* Load the header */
-	header = malloc(sizeof(struct mvlvl_header));
+	header = (struct mvlvl_header *) malloc(sizeof(struct mvlvl_header));
 	fread(header, sizeof(struct mvlvl_header), 1, lvlfile);
 
 	/* Ensure the file is a .mv file */
@@ -45,7 +46,7 @@ Level :: Level(char *filename)
 	this->player_y = (int) header->player_y;
 
 	/* Load the level data */
-	this->contents = malloc(this->width * this->height * sizeof(uint8_t));
+	this->contents = (uint8_t *) malloc(this->width * this->height * sizeof(uint8_t));
 
 	uint8_t byte;
 	int index;
@@ -65,7 +66,16 @@ Level :: Level(char *filename)
 
 	/* Read the checksum */
 	fseek(lvlfile, -1, SEEK_END);		// We should already be 1 byte before the end, but we fseek anyway to skip any padding in case the level contents are and odd number of nibbles long.
-	this->checksum = fgetc(lvlfile);
+	this->checksum = (uint8_t) fgetc(lvlfile);
+
+	/* Count the coins */
+	this->coins = 0;
+
+	for (int i = 0; i < this->width * this->height; i++)
+	{
+		if (this->contents[i] == MV_TILE_COIN)
+			this->coins++;
+	}
 
 	fclose(lvlfile);
 
@@ -89,7 +99,7 @@ Level :: ~Level()
 	free(this->error);
 }
 
-inline uint8_t Level :: tile_at(int x, int y)
+uint8_t Level :: tile_at(int x, int y)
 {
 	return this->contents[(y * this->height) + x];
 }
@@ -146,20 +156,13 @@ void Level :: draw(int tl_x, int tl_y)
 
 }
 
-int Level :: coins()
-{
-	/* Not implemented yet */
-
-	return 0;
-}
-
 int Level :: check()
 {
 	uint32_t sum = 0;
 
 	for (int i = 0; i < this->width * this->height; i++)
 	{
-		sum += contents[i];
+		sum += this->contents[i];
 	}
 
 	return (this->checksum == sum % 256);
