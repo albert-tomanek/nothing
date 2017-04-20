@@ -21,7 +21,8 @@ int main(int argc, char *argv[])
 	tb_init();
 
 	/* Load the level */
-	Level *lvl = new Level(argv[1]);
+	Level *lvl = new Level();
+	lvl->load(argv[1]);
 	if ( lvl->error)   { mv_error(lvl->error, TERMBOX); free(lvl->error); tb_shutdown(); exit(1);}
 	if (!lvl->check()) { mv_error("Checksum failed.", TERMBOX); tb_clear(); }
 
@@ -163,7 +164,10 @@ int main(int argc, char *argv[])
 		getchar();
 	}
 
+	free(keypress);
+
 	delete lvl;
+	delete player;
 
 	return 0;
 }

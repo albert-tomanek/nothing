@@ -7,17 +7,40 @@
 
 #include "level.hh"
 
-#include "tiles.h"
+#include "tiles.hh"
 #include "error.hh"
 
-Level :: Level(char *filename)
+Level :: Level()
+{
+	this->exits_open = false;
+
+	this->width  = 0;
+	this->height = 0;
+
+	this->player_x = 0;
+	this->player_y = 0;
+
+	this->contents = NULL;
+	this->name     = NULL;
+
+	this->error = NULL;
+
+	return;
+}
+
+Level :: ~Level()
+{
+	free(this->contents);
+	free(this->name);
+	free(this->error);
+}
+
+void Level :: load(char *filename)
 {
 	/* We have to pre-declare these, because unlike C,								*
 	 * C++ complains that the variable may not be initialised if you use a goto.	*/
 	struct mvlvl_header *header;
 	bool ismvfile;
-
-	this->exits_open = false;
 
 	FILE *lvlfile = fopen(filename, "r");
 	lvl_check(lvlfile, strerror(errno));	// Check for errors
@@ -45,6 +68,8 @@ Level :: Level(char *filename)
 	this->height   = (int) header->lvl_height;
 	this->player_x = (int) header->player_x;
 	this->player_y = (int) header->player_y;
+
+	free(header);
 
 	/* Load the level data */
 	this->contents = (uint8_t *) malloc(this->width * this->height * sizeof(uint8_t));
@@ -85,19 +110,18 @@ Level :: Level(char *filename)
 error:
 	this->width  = 0;
 	this->height = 0;
+	this->player_x = 0;
+	this->player_y = 0;
+
+	free(this->contents);
 	this->contents = NULL;
-	this->name     = NULL;
+
+	free(this->name);
+	this->name = NULL;
 
 	if (lvlfile) fclose(lvlfile);
 
 	return;
-}
-
-Level :: ~Level()
-{
-	free(this->contents);
-	free(this->name);
-	free(this->error);
 }
 
 uint8_t Level :: tile_at(int x, int y)

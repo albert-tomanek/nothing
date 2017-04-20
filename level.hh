@@ -40,9 +40,10 @@ public:
 	char *error;		// NULL unless there is an error
 
 	/* Methods */
-	Level(char *filename);
+	Level();
 	~Level();
 
+	void load(char *filename);
 	void draw(int x, int y);	// Draws the level, the top left being at (x,y), using termbox.
 
 	uint8_t tile_at(int x, int y);	// Returns the value of the tile at (x,y)
