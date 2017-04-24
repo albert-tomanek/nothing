@@ -4,6 +4,8 @@
 
 #include "direction.hh"
 
+#define STRLEN 64	// Length of user input buffers
+
 class Cursor
 {
 	/* These are the x and y of the cursor IN THE LEVEL, 	*
@@ -13,7 +15,7 @@ public:
 
 	int x;
 	int y;
-	
+
 	Cursor();
 	void move(Direction direction);
 };

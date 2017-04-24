@@ -21,7 +21,7 @@ Level :: Level()
 	this->player_y = 0;
 
 	this->contents = NULL;
-	this->name     = NULL;
+	memset(this->name, '\0', LVL_NAMELEN + 1);
 
 	this->error = NULL;
 
@@ -31,7 +31,6 @@ Level :: Level()
 Level :: ~Level()
 {
 	free(this->contents);
-	free(this->name);
 	free(this->error);
 }
 
@@ -41,8 +40,11 @@ void Level :: load(char *filename)
 	 * C++ complains that the variable may not be initialised if you use a goto.	*/
 	struct mvlvl_header *header;
 	bool ismvfile;
+	FILE *lvlfile;
 
-	FILE *lvlfile = fopen(filename, "r");
+	lvl_check(filename, "Null-pointer passed to Level::load for 'char *filename'.");
+
+	lvlfile = fopen(filename, "r");
 	lvl_check(lvlfile, strerror(errno));	// Check for errors
 
 	/* Load the header */
@@ -63,7 +65,7 @@ void Level :: load(char *filename)
 	lvl_check(header->fmtver == 0x01, "Format version not supported.");
 
 	/* Keep a copy of the level variables */
-	this->name     = strndup(header->lvl_name, 16);
+	strncpy(this->name, header->lvl_name, LVL_NAMELEN);
 	this->width    = (int) header->lvl_width;
 	this->height   = (int) header->lvl_height;
 	this->player_x = (int) header->player_x;
@@ -116,17 +118,79 @@ error:
 	free(this->contents);
 	this->contents = NULL;
 
-	free(this->name);
-	this->name = NULL;
-
 	if (lvlfile) fclose(lvlfile);
 
 	return;
 }
 
+void Level :: save(char *filename)
+{
+	FILE *outfile = NULL;
+
+	lvl_check(filename, "Null-pointer passed to Level::save for 'char *filename'.");
+
+	outfile = fopen(filename, "w");
+	lvl_check(filename, "Error writing file.");
+
+	fputc(0xA6, outfile);
+	fputc(0xC4, outfile);
+	fputs("MVGAME", outfile);	// Does not include null-term
+	fputc(0x01, outfile);
+	fputc(0x00, outfile);
+	fputc((uint8_t) this->width , outfile);
+	fputc((uint8_t) this->height, outfile);
+	fputc((uint8_t) this->player_x, outfile);
+	fputc((uint8_t) this->player_y, outfile);
+	fwrite(this->name, sizeof(char), LVL_NAMELEN, outfile);
+	fputc(0x00, outfile);
+
+	/* Write the level data */
+
+	uint8_t byte;
+	int index;
+
+	while (index < this->width * this->height)
+	{
+		byte = (this->contents[index] << 4);
+
+		if (index != (this->width * this->height) - 1)
+		{
+			byte |= (this->contents[index + 1]);
+		}
+
+		/* First tile */
+		fputc(byte, outfile);
+		index += 2;
+	}
+
+	this->checksum = calculate_checksum();
+	fputc(this->checksum, outfile);
+
+	fclose(outfile);
+	return;
+
+error:
+	fclose(outfile);
+}
+
 uint8_t Level :: tile_at(int x, int y)
 {
+	if (x > this->width || y > this->height)
+	{
+		return 0x10;	// Impossible 4-bit value to signify an error
+	}
+
 	return this->contents[(y * this->height) + x];
+}
+
+uint8_t* Level :: ptr_tile_at(int x, int y)
+{
+	if (x > this->width || y > this->height)
+	{
+		return NULL;
+	}
+
+	return &(this->contents[(y * this->height) + x]);
 }
 
 uint8_t Level :: tile_by(int x, int y, enum Direction direction)
@@ -184,7 +248,7 @@ void Level :: draw(int tl_x, int tl_y)
 
 }
 
-int Level :: check()
+uint8_t Level :: calculate_checksum()
 {
 	uint32_t sum = 0;
 
@@ -193,5 +257,10 @@ int Level :: check()
 		sum += this->contents[i];
 	}
 
-	return (this->checksum == sum % 256);
+	return (uint8_t) sum % 256;
+}
+
+int Level :: check()
+{
+	return (this->checksum == this->calculate_checksum());
 }

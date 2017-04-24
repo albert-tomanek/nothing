@@ -4,6 +4,8 @@
 #include <stdint.h>
 #include "direction.hh"
 
+#define LVL_NAMELEN 16
+
 #define lvl_check(S, M)	if (!(S)) { if (this->error != NULL) { free(this->error); }; this->error = strdup(M); goto error;}
 
 struct mvlvl_header
@@ -23,6 +25,7 @@ struct mvlvl_header
 
 class Level
 {
+	uint8_t calculate_checksum();
 	uint8_t checksum;
 
 public:
@@ -32,7 +35,7 @@ public:
 
 	int   width, height;
 	int   player_x, player_y;
-	char *name;
+	char  name[LVL_NAMELEN + 1];		// We only save 16 bytes; the last one contains a null-byte to keep C functions happy
 	int   coins;
 	bool  exits_open;	// Whether the exits are open or closed.
 
@@ -44,10 +47,12 @@ public:
 	~Level();
 
 	void load(char *filename);
+	void save(char *filename);
 	void draw(int x, int y);	// Draws the level, the top left being at (x,y), using termbox.
 
-	uint8_t tile_at(int x, int y);	// Returns the value of the tile at (x,y)
-	uint8_t tile_by(int x, int y, enum Direction direction);
+	uint8_t  tile_at(int x, int y);	// Returns the value of the tile at (x,y)
+	uint8_t* ptr_tile_at(int x, int y);		// Returns a pointer to the actual tile
+	uint8_t  tile_by(int x, int y, enum Direction direction);
 
 	int check();				// Checks the level data integrity via the checksum. Returns 1 on pass and 0 on fail.
 };

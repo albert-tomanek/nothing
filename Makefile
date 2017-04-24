@@ -19,8 +19,8 @@ HEADERS = chars.h error.hh level.hh main.hh misc.hh mvgame.hh player.hh tiles.h
 $(TARGET): $(OBJECTS)
 	$(CC) main.cc $(OBJECTS) $(CFLAGS) -Wall $(LIBS) -o $@
 
-mvedit: $(OBJECTS) mvedit.cc mvedit.hh
-	$(CC) mvedit.cc $(OBJECTS) $(CFLAGS) -Wall $(LIBS) -o mvedit
+mvedit: $(OBJECTS) mvedit.cc mvedit.hh bbar.cc bbar.hh
+	$(CC) mvedit.cc bbar.cc $(OBJECTS) $(CFLAGS) -Wall $(LIBS) -o mvedit
 
 clean:
 	-rm -f *.o
