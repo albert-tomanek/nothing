@@ -165,6 +165,7 @@ int main(int argc, char *argv[])
 			break;
 		case 'n':
 			bbar->query("Level name: ", lvl->name, LVL_NAMELEN);
+			break;
 		case 'p':
 		{
 			char intbuf[STRLEN];
@@ -202,6 +203,7 @@ int main(int argc, char *argv[])
 			bbar->query("Save as: ", filename, STRLEN);
 
 			lvl->save(filename);
+			break;
 		}
 
 		/* Commands that change the current tile */
